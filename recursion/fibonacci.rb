@@ -14,8 +14,9 @@ end
 def fibs_rec(num,result=[])
   return [0] if num == 1
   return [0,1] if num == 2
-  return fibs_rec(num - 1) + [fibs_rec(num - 1)[-2] + fibs_rec(num - 1)[-1]]
+  return fibs_rec(num - 1) + [ fibs_rec(num - 1)[-2] + fibs_rec(num - 1)[-1] ]
 end
 
+fibs(5)
 
-
+fibs_rec(5)

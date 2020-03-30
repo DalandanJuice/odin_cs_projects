@@ -1,0 +1,24 @@
+[8,2,6,1,5,3,7,4]
+hatiin sa dalawa
+[8,2,6,1] [5,3,7,4]
+hatiin ulit
+[8,2] [6,1] [5,3] [7,4]
+ hati ulit
+[8] [2] [6] [1] [5] [3] [7] [4]
+pagsamahin yung dalawa at ikukumpara muna kung alin ang malaki
+8 > 2 6 > 1  5 > 3  7 > 4
+kung tama, ilalagay sa unahan yung [0] pag mali hindi ilalagay
+[2,8] [1,6] [3,5] [4,7]
+tapos pagsasamahin namang yung bawat pares
+[2,8] [1,6] kung yung 2 ay mas malaki sa 1 pagkatapos ilalagay yung 1 
+[1,2] Nasa 2 pa din yung pointer tapos yung pointer nung nailagay na at yun ay ang 1, ang gagawin naman ay yung pointer  nasa 6 naman. Ikukumpara yung 2 at saka 6 kung alin ang malaki tapos yun ang ilalagay pagkatpos naman susunod na ang 6 na ilalagay na 8
+[1,2,6,8]
+[3,4,5,7] - Ganon din sa kabila
+
+[1,2,6,8] [3,4,5,7] - Tapos pagsasamahin yung dalawa parang yung ginawa ko kanina yung lilipat lipat yung pointer.
+[1,2,6,8] [3,4,5,7]
+
+
+
+
+
