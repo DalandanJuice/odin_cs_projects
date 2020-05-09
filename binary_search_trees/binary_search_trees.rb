@@ -18,12 +18,21 @@ class Tree
   attr_accessor :root
 
   def initialize(array)
-    @root = build_tree(array)
+    @root = build_trees(array)
   end
 
   def build_tree(array)
+    array.each do |x|
+      if balance?(x,array)
+        return a = build(x,array)
+      end
+    end
+    return false
+  end
+
+  def build(data,array)
     array = clean(array)
-    r = Node.new(array[(array.length - 1)/2])
+    r = Node.new(data)
     array.each do |num|
       next if num == r.data
       node = Node.new(num)
@@ -34,6 +43,19 @@ class Tree
       end
     end
     return r
+  end
+
+  def balance?(data,array)
+    array = clean(array)
+    r = Node.new(data)
+    left = right = 0
+    array.each do |num|
+      next if num == r.data
+      node = Node.new(num)
+      left += 1 if node < r
+      right += 1 if node > r
+    end
+    return (left - right).abs <= 1
   end
 
   def insert(data)

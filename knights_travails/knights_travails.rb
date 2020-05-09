@@ -1,14 +1,12 @@
 class Node
   include Comparable
-  attr_accessor :x, :y, :first_move, :second_move
+  attr_accessor :x, :y, :next, :previous
   def initialize(data)
-    if data[0] < 0 || data[1] < 0 || data[0] > 7 || data[1] > 7
-      return 
-    end
+    return if data[0] < 0 || data[1] < 0 || data[0] > 7 || data[1] > 7
    @x = data[0]
-    @y = data[1]
-    @first_move = nil
-    @second_move = nil
+   @y = data[1]
+   @previous = nil
+   @next = nil
   end
 
   def to_s
@@ -16,6 +14,7 @@ class Node
   end
 
   def ==(other)
+    return false if other == nil
     if x == other.x && y == other.y
       return true
     else
@@ -24,13 +23,64 @@ class Node
   end
 end
 
+class Graph
+  attr_accessor :starting_point
+  def initialize(starting_point=[0,0])
+    @starting_point = Node.new(starting_point)
+  end
+
+  def insert_at(data,node)
+    root = starting_point
+    root = root.next.previous if node == starting_point && root.next != nil
+    while root != node
+      if root.next == nil &&  root.previous.next != nil
+        root = root.previous
+      elsif root.next == nil && root.previous.next == nil
+        return nil
+      end
+      root = root.next
+    end
+    append(root,data)
+  end
+
+  def contains(data)
+    root = starting_point
+    node = Node.new(data)
+    while root != nil
+      if root.next == nil && root.previous == nil
+        root = root.previous
+      end
+      return if root == node
+      root = root.next
+    end
+    root
+  end
+
+  def traverse(node, &block)
+    return node if node == nil
+    yield(node)
+    traverse(node.next, &block)
+    traverse(node.previous, &block) if node.previous != nil #&& node.previous == starting_point
+  end
+
+  private
+  def append(node,data)
+      node.next = Node.new(data)
+      node.next.previous = Node.new([node.x,node.y])
+      node = node.next.previous
+      node.previous = Node.new(data)
+  end
+end
+
 
 class GameBoard
   attr_accessor :board
-  attr_reader :knight
+  attr_reader :knight, :graph
+
   def initialize
     @board = create_board
     @knight = Knight.new(self)
+    @graph = Graph.new
   end
 
   def show
@@ -44,11 +94,25 @@ class GameBoard
     nil
   end
 
-  def build_possible_moves(starting_square,ending_square)
+  def knight_moves(starting_point, ending_point)
+    graph = Graph.new(starting_point)
+
+  end
+
+  def build_moves(node,ending_point)
+    move = node
+    end_point = Node.new(ending_point)
+    while move != end_point
+#      if move.x <
+ #     end
+    end
+  end
+
+  def build_possinnnble_moves(starting_square,ending_square)
     starting_node = Node.new(starting_square)
     ending_node = Node.new(ending_square)
     f = starting_node
-    s = starting_node
+    s = starting_nodne
     puts "ffffffffffff #{f.x}"
     while f != ending_node || s != ending_node
       if f.x + 2 <= ending_node.x
@@ -106,66 +170,32 @@ class Knight
     self.y = y
     game_board.board[y][x] = '[K]'
   end
-
-  def move_first(starting_node,ending_node)
-    f = starting_node
-    while f != ending_node
-      return nil if f == nil
-      if f.x + 2 <= ending_node.x
-        f.first_move = Node.new([f.x+2, f.y+1]) if f.y < ending_node.y
-        f.first_move = Node.new([f.x+2, f.y-11]) if f.y > ending_node.y
-      elsif f.y + 2 <= ending_node.y
-        f.first_move = Node.new([f.x+1, f.y+2]) if f.x < ending_node.x
-        f.first_move = Node.new([f.x+1, f.y-21]) if f.x > ending_node.x
-      end
-      f = f.first_move
-    end
-  end
-
-  def move_horizontal(starting_node,ending_node)
-    self.horizontal = Node.new(starting_node)
-    node = horizontal
-    ending_node = Node.new(ending_node)
-    while node != ending_node
-      if node.x + 2 <= ending_node.x 
-        node.first_move = Node.new([node.x+2, node.y+1]) if node.y < ending_node.y
-        node.first_move = Node.new([node.x+2, node.y-1]) if node.y > ending_node.y
-        node = node.first_move
-      elsif node.x - 2 >= ending_node.x
-        node.first_move = Node.new([node.x-2, node.y+1]) if node.y < ending_node.y
-        node.first_move = Node.new([node.x-2, node.y-1]) if node.y > ending_node.y
-        node = node.first_move
-      elsif node.y + 2 <= ending_node.y
-        node.first_move = Node.new([node.x+1, node.y+2]) if node.x < ending_node.x
-        node.first_move = Node.new([node.x-1, node.y+2]) if node.x > ending_node.x
-        node = node.first_move
-      elsif node.y - 2 >= ending_node.y
-        node.first_move = Node.new([node.x+1, node.y-2]) if node.x < ending_node.x
-        node.first_move = Node.new([node.x-1, node.y-2]) if node.x > ending_node.x
-        node = node.first_move
-      end
-      puts node
-    end
-    horizontal
-  end
-
-  def move_vertical
-
-  end
-  def move_second
-  end
 end
 game_board = GameBoard.new
 game_board.show
-game_board.knight.move(0,0)
-game_board.knight.move(1,2)
+x = 2
+y = 3
+game_board.knight.move(2,3)
 game_board.knight.move(3,3)
-
+game_board.knight.move(4,4)
+game_board.knight.move(0,4)
 game_board.show
-knight = Knight.new(GameBoard.new)
-puts knight.move_horizontal([0,0],[3,3])
-puts ''
-puts "#{a.first_move} first move"
-#puts knight.move_horizontal([3,3],[2,3])
-puts ''
-#puts knight.move_horizontal([3,3],[2,3])
+node1 = Node.new([5,3])
+node2 = Node.new([2,3])
+node3 = Node.new([1,6])
+node4 = Node.new([1,8])
+node5 = Node.new([7,2])
+node6 = Node.new([9,4])
+graph = Graph.new([1,1])
+graph.insert_at([2,3],graph.starting_point)
+graph.insert_at([5,4],graph.starting_point)
+graph.insert_at([5,7],Node.new([5,4]))
+graph.insert_at([2,7],Node.new([2,3]))
+graph.insert_at([7,7],Node.new([7,6]))
+a = graph.starting_point
+length = 0
+greatest = length
+graph.traverse(a) do |x|
+  puts x
+end
+puts graph.contains([5,4])
