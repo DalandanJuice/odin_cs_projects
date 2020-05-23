@@ -15,6 +15,7 @@ class Node
 
   def ==(other)
     return false if other == nil
+    return nil if self == nil
     if x == other.x && y == other.y
       return true
     else
@@ -29,17 +30,36 @@ class Graph
     @starting_point = Node.new(starting_point)
   end
 
+  def insert(data)
+      #return nil if (node.x < 0 || node.x > 8) && (node.y < 0 || node.y > 8)
+      root = starting_point
+      if root.next == nil
+        append(root,data)
+      else
+        while root.next != nil
+          root = root.next.previous
+        end
+        append(root,data)
+      end
+  end
+
   def insert_at(data,node)
+    return nil if (node.x < 0 || node.x > 8) && (node.y < 0 || node.y > 8)
     root = starting_point
     root = root.next.previous if node == starting_point && root.next != nil
     while root != node
       if root.next == nil &&  root.previous.next != nil
+
         root = root.previous
+
       elsif root.next == nil && root.previous.next == nil
         return nil
+      else
+        root = root.next
       end
-      root = root.next
     end
+
+    puts data.to_s
     append(root,data)
   end
 
@@ -60,7 +80,7 @@ class Graph
     return node if node == nil
     yield(node)
     traverse(node.next, &block)
-    traverse(node.previous, &block) if node.previous != nil #&& node.previous == starting_point
+    traverse(node.previous, &block) if node.previous != nil && node.previous == starting_point
   end
 
   private
@@ -100,15 +120,39 @@ class GameBoard
   end
 
   def build_moves(node,ending_point)
-    move = node
     end_point = Node.new(ending_point)
-    while move != end_point
-#      if move.x <
- #     end
-    end
+    up = build_up(node)
+    down = build_down(node)
+   left = build_left(node)
+    right = build_right(node)
+    return node
   end
 
-  def build_possinnnble_moves(starting_square,ending_square)
+  def build_up(node)
+   return nil if node.y - 2 < 0
+    graph.insert_at([node.x+1,node.y-2], node)
+    graph.insert_at([node.x-1,node.y-2],node)
+  end
+
+  def build_left(node)
+   return nil if node.x - 2 < 0
+    graph.insert_at([node.x-2,node.y+1], node)
+    graph.insert_at([node.x-2,node.y-1], node)
+  end
+
+  def build_right(node)
+    return nil if node.x + 2 > 8
+    graph.insert_at([node.x+2,node.y+1], node)
+    graph.insert_at([node.x+2,node.y-1], node)
+  end
+
+  def build_down(node)
+   return nil if node.y + 2 > 8
+    graph.insert_at([node.x+1,node.y+2], node)
+    graph.insert_at([node.x-1,node.y+2], node)
+  end
+
+  def build_possible_moves(starting_square,ending_square)
     starting_node = Node.new(starting_square)
     ending_node = Node.new(ending_square)
     f = starting_node
@@ -171,6 +215,7 @@ class Knight
     game_board.board[y][x] = '[K]'
   end
 end
+=begin
 game_board = GameBoard.new
 game_board.show
 x = 2
@@ -199,3 +244,17 @@ graph.traverse(a) do |x|
   puts x
 end
 puts graph.contains([5,4])
+=end
+
+
+gboard = GameBoard.new()
+g = Graph.new([2,3])
+graph = gboard.graph
+g.insert([1,2])
+g.insert([3,3])
+g.insert([7,7])
+g.insert([1,1])
+
+g.traverse(g.starting_point) do |x|
+  puts x
+end
