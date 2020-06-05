@@ -68,7 +68,6 @@ class Graph
     else
       while node_found.next != nil
         node_found = node_found.next.previous
-        puts "node_found #{node_found}"
       end
       append(node_found,data)
     end  
@@ -145,11 +144,15 @@ class GameBoard
 
   def build_moves(node,ending_point)
     end_point = Node.new(ending_point)
+    starting_node = node
+    while node.next != nil
     up = build_up(node)
     down = build_down(node)
     left = build_left(node)
     right = build_right(node)
-    return node
+    node = node.next
+    end
+    return starting_node
   end
 
   def build_up(node)
@@ -226,15 +229,18 @@ class Knight
     game_board.board[y][x] = '[K]'
   end
 end
-=begin
 game_board = GameBoard.new
-game_board.show
-x = 2
-y = 3
+
 game_board.knight.move(2,3)
 game_board.knight.move(3,3)
 game_board.knight.move(4,4)
 game_board.knight.move(0,4)
+game_board.show
+=begin
+
+x = 2
+y = 3
+
 game_board.show
 node1 = Node.new([5,3])
 node2 = Node.new([2,3])
@@ -261,17 +267,9 @@ puts graph.contains([5,4])
 gboard = GameBoard.new()
 graph = gboard.graph
 graph.starting_point = Node.new([2,3])
-graph.insert([1,1])
-graph.new_insert_at([2,2],[1,1])
-graph.new_insert_at([3,3],[1,1])
-graph.traverse(graph.starting_point) do |x|
+gboard.build_moves(graph.starting_point,[4,4])
+graph.traverse do |x|
   puts x
 end
-puts 'graph2'
-graph2 = Graph.new([1,1])
-graph2.new_insert_at([2,2],[1,1])
-graph2.new_insert_at([3,3],[1,1])
-graph2.traverse(graph2.starting_point) do |x|
-  puts x
-end
+
 puts 'graph.starting_point.next'
