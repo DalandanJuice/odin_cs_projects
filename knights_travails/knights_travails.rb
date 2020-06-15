@@ -2,7 +2,7 @@ class Node
   include Comparable
   attr_accessor :x, :y, :next, :previous
   def initialize(data)
-    return if data[0] < 0 || data[1] < 0 || data[0] > 8 || data[1] > 8
+    return nil if data[0] < 0 || data[1] < 0 || data[0] > 7 || data[1] > 7
    @x = data[0]
    @y = data[1]
    @previous = nil
@@ -31,7 +31,7 @@ class Graph
   end
 
   def insert(data)
-      return nil if (data[0] < 0 || data[0] > 8) && (data[1] < 0 || data[1] > 8)
+      return nil if (data[0] < 0 || data[0] > 7) && (data[1] < 0 || data[1] > 7)
       root = starting_point
       if root.next == nil
         append(root,data)
@@ -44,7 +44,7 @@ class Graph
   end
 
   def insert_at(data,node)
-    return nil if (data[0] < 0 || data[0] > 8) && (data[1] < 0 || data[1] > 8)
+    return nil if data[0] < 0 || data[0] > 7 || data[1] < 0 || data[1] > 7
     node_found = find(node)
     return if node_found == nil
     if node_found.next == nil
@@ -61,6 +61,10 @@ class Graph
   def find(data)
     node = Node.new(data)
     traverse do |x|
+        # if x.next == nil && x.x != nil && x.y != nil
+      #     next
+        # end
+
       return x   if x == node
     end
     nil
@@ -123,27 +127,28 @@ class GameBoard
 
   end
 
-  def build_all_possible_moves(starting_point=graph.starting_point,ending_point)
-
-    starting_point =     build_moves(starting_point)
-    a = 0
-    starting_point = build_moves(starting_point.next)
-
+  def build_moves()
+    node = graph.starting_point
+    8.times do
+      graph.traverse do |node|
+      #  break if node.x == 8 && node.y == 6
+       if  node.next == nil && node.x != nil && node.y != nil
+          build(node)
+       end
+    end
+  end
   end
 
-  def build_moves(node)
-    root_node = node
+  def build(node)
+    node = graph.find([node.x, node.y])
+    return if node.next != nil
     up = build_up(node)
     down = build_down(node)
     left = build_left(node)
     right = build_right(node)
-    return node
   end
 
   def build_up(node)
-   return nil if node.y - 2 < 0 && (node.x + 1 > 8 || node.x - 1 < 0)
-   puts "node: #{node}"
-   puts node == graph.starting_point
    if node == graph.starting_point
     graph.insert([node.x+1,node.y-2])
     graph.insert([node.x-1,node.y-2])
@@ -154,7 +159,6 @@ class GameBoard
   end
 
   def build_left(node)
-   return nil if node.x - 2 < 0 && (node.y + 1 > 8 || node.y - 1 < 0)
    if node == graph.starting_point
     graph.insert([node.x-2,node.y+1])
     graph.insert([node.x-2,node.y-1])
@@ -165,7 +169,6 @@ class GameBoard
   end
 
   def build_right(node)
-    return nil if node.x + 2 > 8 && (node.y + 1 > 8 || node.y - 1 < 0)
     if node == graph.starting_point
       graph.insert([node.x+2,node.y+1])
       graph.insert([node.x+2,node.y-1])
@@ -176,14 +179,21 @@ class GameBoard
   end
 
   def build_down(node)
-    return nil if node.y + 2 > 8 && (node.x + 1 > 8 || node.x - 1 < 0)
-    if node = graph.starting_point
-      graph.insert([node.x+1,node.y+2])
-      graph.insert([node.x-1,node.y+2])
+    if node == graph.starting_point
+     graph.insert([node.x+1,node.y+2])
+     graph.insert([node.x-1,node.y+2])
     else
-      graph.insert_at([node.x+1,node.y+2], [node.x, node.y])
-      graph.insert_at([node.x-1,node.y+2], [node.x, node.y])
+     graph.insert_at([node.x+1,node.y+2], [node.x, node.y])
+     graph.insert_at([node.x-1,node.y+2], [node.x, node.y])
     end
+
+  #  if node = graph.starting_point
+  #    graph.insert([node.x+1,node.y+2])
+    #  graph.insert([node.x-1,node.y+2])
+    #else
+    #  graph.insert_at([node.x+1,node.y+2], [node.x, node.y])
+    #  graph.insert_at([node.x-1,node.y+2], [node.x, node.y])
+  #  end
   end
 
   private
@@ -215,47 +225,37 @@ class Knight
 end
 game_board = GameBoard.new
 
-game_board.knight.move(2,3)
 game_board.knight.move(3,3)
-game_board.knight.move(4,4)
+game_board.knight.move(4,3)
+game_board.knight.move(4,5)
 game_board.knight.move(0,4)
 game_board.show
-=begin
-
-x = 2
-y = 3
-
-game_board.show
-node1 = Node.new([5,3])
-node2 = Node.new([2,3])
-node3 = Node.new([1,6])
-node4 = Node.new([1,8])
-node5 = Node.new([7,2])
-node6 = Node.new([9,4])
-graph = Graph.new([1,1])
-graph.insert_at([2,3],graph.starting_point)
-graph.insert_at([5,4],graph.starting_point)
-graph.insert_at([5,7],Node.new([5,4]))
-graph.insert_at([2,7],Node.new([2,3]))
-graph.insert_at([7,7],Node.new([7,6]))
-a = graph.starting_point
-length = 0
-greatest = length
-graph.traverse(a) do |x|
-  puts x
-end
-puts graph.contains([5,4])
-=end
-
 
 gboard = GameBoard.new()
 graph = gboard.graph
-gboard.graph.starting_point = Node.new([1,2])
-puts gboard.graph.starting_point
-#gboard.build_all_possible_moves(a,[3,3])
-gboard.build_moves(graph.starting_point)
-graph.traverse do |x|
- puts x
+gboard.graph.starting_point = Node.new([0,0])
+graph.insert([3,3])
+three = graph.find([3,3])
+gboard.build_up(three)
+gboard.build_down(three)
+#gboard.build(Node.new([3,3]))
+graph.traverse do |node|
+  puts node
 end
+
+#gboard.build_all_possible_moves(a,[3,3])
+=begin
+gboard.build_moves
 #puts "next: #{a.next.next}"
-puts "founded; #{graph.find([3,3])}"
+three = graph.find([4,5])
+#gboard.build(Node.new([4,5]))
+graph.traverse do |node|
+  if node.previous != nil && node.previous.x == 3 && node.previous.y == 3 # &&  node.next != nil && node.next.x == 4 && node.next.y == 5
+    three = node
+    puts node
+  end
+
+end
+gboard.build(three.next.previous.next)
+puts "graph: #{three.next.previous.next.next}"
+=end
